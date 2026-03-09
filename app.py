@@ -128,12 +128,12 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("Time Spent vs. GPA")
-    fig_scatter = px.scatter(df, x="StudyTimeWeekly", y="GPA", 
+    fig_scatter = px.scatter(df, x="StudyTime", y="GPA", 
                              color="Performance_Category", 
                              hover_data=["Absences"],
                              color_discrete_map={"High Performer": "green", "Average Student": "blue", "At Risk": "red"},
                              opacity=0.7,
-                             labels={"StudyTimeWeekly": "Weekly Study Time (Hours)"})
+                             labels={"StudyTime": "Weekly Study Time (Hours)"})
     fig_scatter.update_layout(plot_bgcolor="white", margin=dict(t=30, l=10, r=10, b=10))
     st.plotly_chart(fig_scatter, use_container_width=True)
 
@@ -155,8 +155,8 @@ st.markdown("### The Impact of Support Systems")
 col3, col4, col5 = st.columns(3)
 
 with col3:
-    fig_box1 = px.box(df, x="Parental_Support", y="GPA", color="Parental_Support",
-                      category_orders={"Parental_Support": ["Low", "Medium", "High"]},
+    fig_box1 = px.box(df, x="ParentalSupport", y="GPA", color="ParentalSupport",
+                      category_orders={"ParentalSupport": ["Low", "Medium", "High"]},
                       title="Parental Support")
     fig_box1.update_layout(showlegend=False, margin=dict(t=40, l=10, r=10, b=10))
     st.plotly_chart(fig_box1, use_container_width=True)
@@ -191,7 +191,7 @@ st.plotly_chart(fig_heat, use_container_width=True)
 # ==========================================
 st.markdown("---")
 with st.expander("🔍 View Raw Filtered Data"):
-    st.dataframe(df.style.highlight_max(axis=0, subset=['GPA', 'Study_Time_Weekly']), use_container_width=True)
+    st.dataframe(df.style.highlight_max(axis=0, subset=['GPA', 'StudyTime']), use_container_width=True)
     
     # Download button
     csv = df.to_csv(index=False).encode('utf-8')
