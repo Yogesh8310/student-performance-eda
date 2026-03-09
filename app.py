@@ -154,8 +154,8 @@ if df.empty:
 # ==========================================
 # HEADER & KPIs
 # ==========================================
-st.title("📊 Student Performance Overview")
-st.markdown("Explore the factors influencing GPA, attendance, and student success.")
+st.markdown("<h1><span style='color:#4da8da'>♦</span> Student Performance Overview</h1>", unsafe_allow_html=True)
+st.markdown("<p style='color:#a0aec0; font-size: 1.1rem;'>Explore the factors influencing GPA, attendance, and student success.</p>", unsafe_allow_html=True)
 
 # KPI Calculations
 total_students = len(df)
