@@ -259,6 +259,47 @@ with col5:
     st.plotly_chart(style_box_plot(fig_box3), use_container_width=True)
 
 
+st.markdown("---")
+
+# ==========================================
+# CHARTS ROW 3: DEEP DIVE ANALYTICS
+# ==========================================
+col6, col7 = st.columns(2)
+
+with col6:
+    st.markdown("### 📉 Attendance Impact on Performance")
+    # Calculate average GPA per absence count
+    absence_impact = df.groupby('Absences')['GPA'].mean().reset_index()
+    fig_line = px.line(absence_impact, x="Absences", y="GPA", markers=True, 
+                       title="Average GPA by Number of Absences")
+    fig_line.update_traces(line_color="#4da8da", line_width=3, marker_size=8)
+    fig_line.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter", color="#a0aec0"),
+        margin=dict(t=40, l=10, r=10, b=10)
+    )
+    fig_line.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#2d3748', zeroline=False)
+    fig_line.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#2d3748', zeroline=False)
+    st.plotly_chart(fig_line, use_container_width=True)
+
+with col7:
+    st.markdown("### 📊 GPA Distribution Curve")
+    fig_hist = px.histogram(df, x="GPA", nbins=20, marginal="box", 
+                            color="Performance_Category", color_discrete_map=perf_colors,
+                            title="Overall Grade Distribution")
+    fig_hist.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter", color="#a0aec0"),
+        barmode="overlay",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, title=None),
+        margin=dict(t=40, l=10, r=10, b=10)
+    )
+    fig_hist.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#2d3748', zeroline=False)
+    fig_hist.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#2d3748', zeroline=False)
+    st.plotly_chart(fig_hist, use_container_width=True)
+
+st.markdown("---")
+
 # ==========================================
 # CORRELATION HEATMAP
 # ==========================================
