@@ -19,30 +19,24 @@ st.set_page_config(
 # Custom CSS for a clean, modern dashboard aesthetic
 st.markdown("""
 <style>
-    /* Main background */
-    .stApp {
-        background-color: #f4f6f9;
-    }
+    /* Main background - let Streamlit handle it via theme */
+    
     /* Metric Cards */
     div[data-testid="stMetricValue"] {
         font-size: 2rem !important;
         font-weight: 700;
-        color: #1f77b4;
+        color: var(--text-color);
     }
     div[data-testid="stMetricLabel"] {
         font-size: 1rem !important;
-        color: #555555;
+        color: var(--text-color);
+        opacity: 0.8;
     }
     /* Headers */
     h1, h2, h3 {
-        color: #2c3e50;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    /* Sidebar */
-    .css-1d391kg {
-        background-color: #ffffff;
-        border-right: 1px solid #e0e0e0;
-    }
+    /* Remove hardcoded white sidebar background that breaks dark mode */
 </style>
 """, unsafe_allow_html=True)
 
