@@ -10,33 +10,91 @@ import matplotlib.pyplot as plt
 # PAGE CONFIGURATION & CUSTOM CSS
 # ==========================================
 st.set_page_config(
-    page_title="Student Performance Dashboard",
-    page_icon="🎓",
+    page_title="Student Performance Analytics",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for a clean, modern dashboard aesthetic
+# Custom CSS for a premium, corporate dashboard aesthetic
 st.markdown("""
 <style>
-    /* Main background - let Streamlit handle it via theme */
+    /* Typography and Global */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
-    /* Metric Cards */
+    html, body, [class*="css"]  {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Main Backgrounds & Text */
+    .stApp {
+        background-color: #0e1117;
+        color: #f0f2f6;
+    }
+    
+    /* Premium Headers */
+    h1 {
+        font-weight: 700 !important;
+        background: -webkit-linear-gradient(45deg, #4da8da, #007cc7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding-bottom: 0.5rem;
+    }
+    h2, h3 {
+        font-weight: 600 !important;
+        color: #e0e6ed !important;
+    }
+    
+    /* Styled Metric Cards */
+    div[data-testid="stMetric"] {
+        background-color: #1a1f2b;
+        border-radius: 12px;
+        padding: 20px 24px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border: 1px solid #2d3748;
+        transition: transform 0.2s ease-in-out;
+    }
+    div[data-testid="stMetric"]:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0,0,0,0.2);
+        border-color: #4da8da;
+    }
     div[data-testid="stMetricValue"] {
-        font-size: 2rem !important;
+        font-size: 2.5rem !important;
         font-weight: 700;
-        color: var(--text-color);
+        color: #ffffff;
     }
     div[data-testid="stMetricLabel"] {
-        font-size: 1rem !important;
-        color: var(--text-color);
-        opacity: 0.8;
+        font-size: 1.1rem !important;
+        color: #a0aec0;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    /* Headers */
-    h1, h2, h3 {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* Sidebar Refinements */
+    [data-testid="stSidebar"] {
+        background-color: #12161f;
+        border-right: 1px solid #2d3748;
     }
-    /* Remove hardcoded white sidebar background that breaks dark mode */
+    [data-testid="stSidebar"] .css-17lntkn {
+        color: #a0aec0;
+    }
+    
+    /* Styled DataFrame */
+    .stDataFrame {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #2d3748;
+    }
+    
+    /* Expander Styling */
+    .streamlit-expanderHeader {
+        background-color: #1a1f2b;
+        color: #f0f2f6;
+        border-radius: 8px;
+        font-weight: 600;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -118,66 +176,106 @@ st.markdown("---")
 # ==========================================
 # CHARTS ROW 1: CORE METRICS
 # ==========================================
-col1, col2 = st.columns(2)
+# Corporate Color Palette
+corp_colors = ["#4da8da", "#007cc7", "#12232e", "#203647", "#eefbfb"]
+perf_colors = {"High Performer": "#38a169", "Average Student": "#3182ce", "At Risk": "#e53e3e"}
+
+col1, col2 = st.columns((2, 1)) # Make Scatter plot slightly wider
 
 with col1:
-    st.subheader("Time Spent vs. GPA")
+    st.markdown("### 📈 Time Invested vs. Outcomes")
     fig_scatter = px.scatter(df, x="StudyTime", y="GPA", 
                              color="Performance_Category", 
-                             hover_data=["Absences"],
-                             color_discrete_map={"High Performer": "green", "Average Student": "blue", "At Risk": "red"},
-                             opacity=0.7,
-                             labels={"StudyTime": "Weekly Study Time (Hours)"})
-    fig_scatter.update_layout(plot_bgcolor="white", margin=dict(t=30, l=10, r=10, b=10))
+                             hover_data=["Absences", "ParentalSupport"],
+                             color_discrete_map=perf_colors,
+                             opacity=0.8,
+                             size="Absences", size_max=15,
+                             labels={"StudyTime": "Weekly Study Time (Hours)", "Absences": "Total Absences"})
+                             
+    # Corporate Styling for Plotly
+    fig_scatter.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter", color="#a0aec0"),
+        margin=dict(t=10, l=10, r=10, b=10),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, title=None)
+    )
+    fig_scatter.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#2d3748', zeroline=False)
+    fig_scatter.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#2d3748', zeroline=False)
+    
     st.plotly_chart(fig_scatter, use_container_width=True)
 
 with col2:
-    st.subheader("Performance Segmentation")
+    st.markdown("### 🎯 Cohort Segmentation")
     segment_counts = df['Performance_Category'].value_counts().reset_index()
     segment_counts.columns = ['Category', 'Count']
-    fig_pie = px.pie(segment_counts, names='Category', values='Count', hole=0.4,
+    fig_donut = px.pie(segment_counts, names='Category', values='Count', hole=0.6,
                      color='Category',
-                     color_discrete_map={"High Performer": "#2ca02c", "Average Student": "#1f77b4", "At Risk": "#d62728"})
-    fig_pie.update_layout(margin=dict(t=30, l=10, r=10, b=10))
-    st.plotly_chart(fig_pie, use_container_width=True)
+                     color_discrete_map=perf_colors)
+                     
+    fig_donut.update_traces(textposition='inside', textinfo='percent+label', marker=dict(line=dict(color='#0e1117', width=2)))
+    fig_donut.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)", 
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter", color="#a0aec0"),
+        showlegend=False, 
+        margin=dict(t=10, l=10, r=10, b=10)
+    )
+    
+    st.plotly_chart(fig_donut, use_container_width=True)
 
 
 # ==========================================
 # CHARTS ROW 2: CATEGORICAL IMPACT
 # ==========================================
-st.markdown("### The Impact of Support Systems")
+st.markdown("### 🏢 Structural Support Analysis")
 col3, col4, col5 = st.columns(3)
+
+def style_box_plot(fig):
+    fig.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter", color="#a0aec0"),
+        showlegend=False, margin=dict(t=40, l=10, r=10, b=10),
+        colorway=corp_colors
+    )
+    fig.update_xaxes(showgrid=False, zeroline=False)
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#2d3748', zeroline=False)
+    return fig
 
 with col3:
     fig_box1 = px.box(df, x="ParentalSupport", y="GPA", color="ParentalSupport",
                       category_orders={"ParentalSupport": ["Low", "Medium", "High"]},
-                      title="Parental Support")
-    fig_box1.update_layout(showlegend=False, margin=dict(t=40, l=10, r=10, b=10))
-    st.plotly_chart(fig_box1, use_container_width=True)
+                      title="Parental Engagement Foundation", points="all")
+    st.plotly_chart(style_box_plot(fig_box1), use_container_width=True)
 
 with col4:
-    fig_box2 = px.box(df, x="Tutoring", y="GPA", color="Tutoring", title="Tutoring Sessions")
-    fig_box2.update_layout(showlegend=False, margin=dict(t=40, l=10, r=10, b=10))
-    st.plotly_chart(fig_box2, use_container_width=True)
+    fig_box2 = px.box(df, x="Tutoring", y="GPA", color="Tutoring", 
+                      title="Supplemental Instruction (Tutoring)", points="all")
+    st.plotly_chart(style_box_plot(fig_box2), use_container_width=True)
 
 with col5:
-    fig_box3 = px.box(df, x="ExtracurricularActivities", y="GPA", color="ExtracurricularActivities", title="Extracurriculars")
-    fig_box3.update_layout(showlegend=False, margin=dict(t=40, l=10, r=10, b=10))
-    st.plotly_chart(fig_box3, use_container_width=True)
+    fig_box3 = px.box(df, x="ExtracurricularActivities", y="GPA", color="ExtracurricularActivities", 
+                      title="Extracurricular Involvement", points="all")
+    st.plotly_chart(style_box_plot(fig_box3), use_container_width=True)
 
 
 # ==========================================
 # CORRELATION HEATMAP
 # ==========================================
-st.markdown("### Feature Correlation Analysis")
-st.write("Understand how variables mathematically influence each other. High positive values mean features grow together; high negative values mean they move in opposite directions (like Absences hurting GPA).")
+st.markdown("### 🧩 Strategic Feature Correlation")
+st.markdown("<p style='color:#a0aec0; font-size: 0.95rem;'>Quantitative matrix evaluating the linear relationships between diverse performance vectors.</p>", unsafe_allow_html=True)
 
 # Calculate correlation
 numeric_df = df.select_dtypes(include=[np.number])
 corr = numeric_df.corr()
 
-fig_heat = px.imshow(corr, text_auto=True, aspect="auto", color_continuous_scale='RdBu_r', origin='lower')
-fig_heat.update_layout(margin=dict(t=20, l=10, r=10, b=10))
+fig_heat = px.imshow(corr, text_auto=".2f", aspect="auto", 
+                     color_continuous_scale='Tealgrn', origin='lower')
+fig_heat.update_layout(
+    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+    font=dict(family="Inter", color="#a0aec0"),
+    margin=dict(t=20, l=10, r=10, b=10)
+)
 st.plotly_chart(fig_heat, use_container_width=True)
 
 # ==========================================
